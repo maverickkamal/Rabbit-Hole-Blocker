@@ -1,12 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rabbit-Hole Blocker</title>
   <link rel="stylesheet" href="popup.css">
 </head>
+
 <body>
+  <div class="container">
+    <div class="header">
+      <span class="logo">🐇</span>
+      <h1>Rabbit-Hole Blocker</h1>
+    </div>
+    <p class="subtitle">Block distractions on YouTube &amp; Reddit</p>
+    <div class="toggle-row">
+      <label class="switch">
+        <input type="checkbox" id="toggle">
+        <span class="slider"></span>
+      </label>
+      <span class="status" id="status">Enabled</span>
+    </div>
+  </div>
   <script src="popup.js"></script>
 </body>
+
 </html>
