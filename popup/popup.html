@@ -154,6 +154,32 @@
         </label>
       </div>
     </div>
+
+    <div class="break-section" id="break-section">
+      <button class="break-btn" id="break-btn">
+        <svg class="break-icon" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          xmlns="http://www.w3.org/2000/svg">
+          <path d="M17 8C17 10.76 14.76 13 12 13C9.24 13 7 10.76 7 8C7 5.24 9.24 3 12 3C14.76 3 17 5.24 17 8Z"
+            stroke="currentColor" stroke-width="2" />
+          <path d="M3 21C3 16.03 7.03 12 12 12C16.97 12 21 16.03 21 21" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" />
+        </svg>
+        Take a break
+      </button>
+      <div class="break-presets hidden" id="break-presets">
+        <button class="preset-btn" data-minutes="5">5 min</button>
+        <button class="preset-btn" data-minutes="10">10 min</button>
+        <button class="preset-btn" data-minutes="15">15 min</button>
+      </div>
+      <div class="break-active hidden" id="break-active">
+        <div class="break-countdown" id="break-countdown">0:00</div>
+        <div class="break-track">
+          <div class="break-progress" id="break-progress"></div>
+          <div class="break-rabbit" id="break-rabbit">🐇</div>
+        </div>
+        <button class="break-cancel" id="break-cancel">End break early</button>
+      </div>
+    </div>
   </div>
   <script src="popup.js"></script>
 </body>
