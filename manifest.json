@@ -20,5 +20,7 @@
     "default_popup": "popup/popup.html",
     "default_title": "Rabbit-Hole Blocker"
   },
-  "icons": {}
+  "icons": {
+    "128": "icons/icon128.png"
+  }
 }
