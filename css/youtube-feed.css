@@ -1,0 +1,4 @@
+ytd-rich-grid-renderer,
+ytd-browse[page-subtype="home"] #primary {
+    display: none !important;
+}

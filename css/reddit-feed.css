@@ -1,0 +1,5 @@
+.ListingLayout-outerContainer,
+shreddit-feed,
+div[data-testid="post-container"] {
+    display: none !important;
+}

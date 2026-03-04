@@ -1,0 +1,6 @@
+#right-sidebar-container,
+.sidebar,
+div[data-testid="right-sidebar"],
+shreddit-right-rail {
+    display: none !important;
+}
