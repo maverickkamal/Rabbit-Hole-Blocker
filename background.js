@@ -1,20 +1,25 @@
-var YOUTUBE_CSS = [
-    'css/youtube-feed.css',
-    'css/youtube-sidebar.css',
-    'css/youtube-comments.css',
-    'css/youtube-shorts.css'
-];
+var CSS_MAP = {
+    youtube: {
+        feed: 'css/youtube-feed.css',
+        sidebar: 'css/youtube-sidebar.css',
+        comments: 'css/youtube-comments.css',
+        shorts: 'css/youtube-shorts.css'
+    },
+    reddit: {
+        feed: 'css/reddit-feed.css',
+        sidebar: 'css/reddit-sidebar.css'
+    }
+};
 
-var REDDIT_CSS = [
-    'css/reddit-feed.css',
-    'css/reddit-sidebar.css'
-];
+var ALL_CSS = Object.keys(CSS_MAP).reduce(function (arr, site) {
+    return arr.concat(Object.values(CSS_MAP[site]));
+}, []);
 
 var DEFAULTS = {
     enabled: true,
     sites: {
-        youtube: { active: true },
-        reddit: { active: true }
+        youtube: { active: true, feed: true, sidebar: true, comments: true, shorts: true },
+        reddit: { active: true, feed: true, sidebar: true }
     }
 };
 
@@ -26,45 +31,46 @@ function isReddit(url) {
     return /^https?:\/\/(www\.)?reddit\.com/i.test(url);
 }
 
-function injectFiles(tabId, files) {
-    files.forEach(function (file) {
-        chrome.scripting.insertCSS({
-            target: { tabId: tabId },
-            files: [file]
-        }).catch(function () { });
-    });
+function injectFile(tabId, file) {
+    chrome.scripting.insertCSS({
+        target: { tabId: tabId },
+        files: [file]
+    }).catch(function () { });
 }
 
-function removeFiles(tabId, files) {
-    files.forEach(function (file) {
-        chrome.scripting.removeCSS({
-            target: { tabId: tabId },
-            files: [file]
-        }).catch(function () { });
-    });
+function removeFile(tabId, file) {
+    chrome.scripting.removeCSS({
+        target: { tabId: tabId },
+        files: [file]
+    }).catch(function () { });
+}
+
+function getSiteKey(url) {
+    if (isYouTube(url)) return 'youtube';
+    if (isReddit(url)) return 'reddit';
+    return null;
 }
 
 function applyToTab(tabId, url, data) {
     if (!data.enabled) {
-        removeFiles(tabId, YOUTUBE_CSS.concat(REDDIT_CSS));
+        ALL_CSS.forEach(function (file) { removeFile(tabId, file); });
         return;
     }
 
-    if (isYouTube(url)) {
-        if (data.sites.youtube.active) {
-            injectFiles(tabId, YOUTUBE_CSS);
-        } else {
-            removeFiles(tabId, YOUTUBE_CSS);
-        }
-    }
+    var siteKey = getSiteKey(url);
+    if (!siteKey) return;
 
-    if (isReddit(url)) {
-        if (data.sites.reddit.active) {
-            injectFiles(tabId, REDDIT_CSS);
+    var siteConfig = data.sites[siteKey];
+    var siteCSS = CSS_MAP[siteKey];
+
+    Object.keys(siteCSS).forEach(function (element) {
+        var file = siteCSS[element];
+        if (siteConfig.active && siteConfig[element] !== false) {
+            injectFile(tabId, file);
         } else {
-            removeFiles(tabId, REDDIT_CSS);
+            removeFile(tabId, file);
         }
-    }
+    });
 }
 
 function applyToAllTabs(data) {
@@ -79,8 +85,18 @@ chrome.runtime.onInstalled.addListener(function () {
     chrome.storage.local.get(DEFAULTS, function (existing) {
         var merged = {
             enabled: existing.enabled !== undefined ? existing.enabled : DEFAULTS.enabled,
-            sites: existing.sites || DEFAULTS.sites
+            sites: {}
         };
+
+        ['youtube', 'reddit'].forEach(function (site) {
+            var def = DEFAULTS.sites[site];
+            var cur = (existing.sites && existing.sites[site]) || {};
+            merged.sites[site] = {};
+            Object.keys(def).forEach(function (key) {
+                merged.sites[site][key] = cur[key] !== undefined ? cur[key] : def[key];
+            });
+        });
+
         chrome.storage.local.set(merged);
     });
 });
